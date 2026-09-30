@@ -1,6 +1,7 @@
 const express = require("express");
 const crypto = require("crypto");
 const { db, rowToItem } = require("./db");
+const { send } = require("process");
 
 
 const app = express();
@@ -105,6 +106,19 @@ app.post("/api/v1/items", (req,res) =>{
     const row = db.prepare("SELECT * FROM items WHERE id = ?").get(id)
     sendOk(res,rowToItem(row),201)
 
+})
+
+// catch-all : no route matched -> 404 in our format
+app.use((req,res)=>{
+    sendError(res,404,"NOT_FOUND","Route not Found")
+})
+// error handler: must have 4 params, must be LAST
+app.use((err,req,res,next) => {
+    if (err.type === "entity.parse.failed"){
+        return sendError(res,400,"VALIDATION_ERROR","request body must be a valid json")
+    }
+    console.error(err)
+    sendError(res,500,"INTERNAL_ERROR","internal server error")
 })
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
