@@ -1,0 +1,27 @@
+{
+  "name": "cmput401-assignment",
+  "version": "1.0.0",
+  "description": "Your full name: Your CCID: Your github username: Did you have extra credit frontend: Yes or No Did you have extra credit tests: Yes or No",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Swayam1129/CMPUT401-Assignment.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Swayam1129/CMPUT401-Assignment/issues"
+  },
+  "homepage": "https://github.com/Swayam1129/CMPUT401-Assignment#readme",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.2.1",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
