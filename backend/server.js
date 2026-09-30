@@ -108,6 +108,42 @@ app.post("/api/v1/items", (req,res) =>{
 
 })
 
+
+app.patch("/api/v1/items/:id", (req,res) =>{
+    const body = req.body
+    
+    if (typeof body !== "object" || body === null || Array.isArray(body)){
+        return sendError(res, 400, "VALIDATION_ERROR", "request body must be a json object")
+    }
+    
+    if ( "id" in body){
+        return sendError(res,400,"VALIDATION_ERROR", "id must not be provided")    
+    }
+    const row = db.prepare("SELECT * FROM items WHERE id = ?").get(req.params.id)
+    if(!row){
+        return sendError(res,404,"NOT_FOUND","Item not found")
+    }
+    const merged = { ...rowToItem(row), ...body}
+    delete merged.id
+    
+    const error = validateItem(merged)
+    if (error){
+        return sendError(res,400,"VALIDATION_ERROR",error)
+    }
+
+    db.prepare('UPDATE items SET title = ?, source_name = ?, published_at = ?, url = ?, summary = ?, tags = ? WHERE id = ?').run(
+        merged.title,
+        merged.source.name,
+        merged.publishedAt,
+        merged.url,
+        merged.summary,
+        JSON.stringify(merged.tags),
+        req.params.id
+    )
+
+    const updated = db.prepare('SELECT * FROM items WHERE id = ?').get(req.params.id)
+    sendOk(res,rowToItem(updated))
+})
 // catch-all : no route matched -> 404 in our format
 app.use((req,res)=>{
     sendError(res,404,"NOT_FOUND","Route not Found")
