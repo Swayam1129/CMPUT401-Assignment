@@ -1,11 +1,16 @@
 const express = require("express");
 const crypto = require("crypto");
+const swaggerUi = require("swagger-ui-express");
+const openapiSpec = require("./openapi.json");
 const { db, rowToItem } = require("./db");
-const { send } = require("process");
+const path = require("path");
 
 
 const app = express();
 app.use(express.json());
+app.get("/openapi.json", (req, res) => res.json(openapiSpec));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
+app.use(express.static(path.join(__dirname, "..", "frontend")));
 
 function sendOk(res , data, status = 200){
     res.status(status).json({status: "ok", data})

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Items</title>
+  <style>
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      max-width: 640px;
+      margin: 40px auto;
+      padding: 0 16px;
+      color: #222;
+      line-height: 1.5;
+    }
+    h1 { margin-bottom: 4px; }
+    .subtitle { color: #555; margin-top: 0; }
+    button {
+      font-size: 1rem;
+      padding: 8px 16px;
+      border: 1px solid #1a5e3a;
+      background: #1f6f45;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover { background: #1a5e3a; }
+    button:focus-visible { outline: 3px solid #f2b705; outline-offset: 2px; }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    .results {
+      margin-top: 20px;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fafafa;
+    }
+    .results p { margin: 4px 0; }
+    .label { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main data-testid="app-root">
+    <h1>Campus Items</h1>
+    <p class="subtitle">Load the latest items from the API.</p>
+
+    <button type="button" data-testid="load-button" id="load">Load items</button>
+
+    <section class="results" aria-live="polite">
+      <p><span class="label">Items loaded:</span> <span data-testid="items-count">-</span></p>
+      <p><span class="label">First item:</span> <span data-testid="first-item-title">-</span></p>
+    </section>
+  </main>
+
+  <script>
+    const button = document.getElementById("load");
+    const countEl = document.querySelector('[data-testid="items-count"]');
+    const titleEl = document.querySelector('[data-testid="first-item-title"]');
+
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      button.textContent = "Loading...";
+
+      try {
+        const response = await fetch("/api/v1/items");
+        const body = await response.json();
+
+        if (!response.ok || body.status !== "ok") {
+          countEl.textContent = "0";
+          titleEl.textContent = "Could not load items";
+          return;
+        }
+
+        const items = body.data;
+        countEl.textContent = String(items.length);
+        titleEl.textContent = items.length > 0 ? items[0].title : "No items";
+      } catch (err) {
+        countEl.textContent = "0";
+        titleEl.textContent = "Could not load items";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Load items";
+      }
+    });
+  </script>
+</body>
+</html>
