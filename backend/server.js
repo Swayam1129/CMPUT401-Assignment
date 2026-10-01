@@ -178,7 +178,7 @@ app.delete("/api/v1/items/:id", (req,res) => {
 })
 // catch-all : no route matched -> 404 in our format
 app.use((req,res)=>{
-    sendError(res,404,"NOT_FOUND","Route not Found")
+    sendError(res,404,"NOT_FOUND","Route not found")
 })
 // error handler: must have 4 params, must be LAST
 app.use((err,req,res,next) => {
