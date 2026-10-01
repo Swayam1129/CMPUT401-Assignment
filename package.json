@@ -1,7 +1,7 @@
 {
   "name": "cmput401-assignment",
   "version": "1.0.0",
-  "description": "Your full name: Your CCID: Your github username: Did you have extra credit frontend: Yes or No Did you have extra credit tests: Yes or No",
+  "description": "CMPUT 401 preparation assignment: REST API for campus items using Express and SQLite",
   "main": "index.js",
   "scripts": {
     "test": "node --test tests/*.test.js",
