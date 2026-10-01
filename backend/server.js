@@ -171,5 +171,13 @@ app.use((err,req,res,next) => {
     console.error(err)
     sendError(res,500,"INTERNAL_ERROR","internal server error")
 })
-const PORT = process.env.PORT || 8080
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+
+const PORT = process.env.PORT || 8080;
+
+// only start listening when this file is run directly (npm start),
+// not when a test file require() it
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+}
+
+module.exports = app;
