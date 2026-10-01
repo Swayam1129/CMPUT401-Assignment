@@ -1,0 +1,105 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CMPUT 401 Items API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": { "description": "Service is up" }
+        }
+      }
+    },
+    "/api/v1/items": {
+      "get": {
+        "summary": "List items",
+        "parameters": [
+          { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 10, "minimum": 1, "maximum": 50 } },
+          { "name": "offset", "in": "query", "required": false, "schema": { "type": "integer", "default": 0, "minimum": 0 } }
+        ],
+        "responses": {
+          "200": { "description": "List of items" },
+          "400": { "description": "Invalid limit or offset" }
+        }
+      },
+      "post": {
+        "summary": "Create an item",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ItemInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Item created" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/api/v1/items/{id}": {
+      "get": {
+        "summary": "Get one item",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "The item" },
+          "404": { "description": "Item not found" }
+        }
+      },
+      "patch": {
+        "summary": "Update an item (partial)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ItemInput" },
+              "example": { "title": "Updated title" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Item updated" },
+          "400": { "description": "Validation error" },
+          "404": { "description": "Item not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an item",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Item deleted (no body)" },
+          "404": { "description": "Item not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ItemInput": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "New gym hours" },
+          "source": {
+            "type": "object",
+            "properties": { "name": { "type": "string", "example": "Rec Centre" } }
+          },
+          "publishedAt": { "type": "string", "format": "date-time", "example": "2025-04-01T08:00:00Z" },
+          "url": { "type": "string", "example": "https://example.com/gym" },
+          "summary": { "type": "string", "example": "Open later on weekends." },
+          "tags": { "type": "array", "items": { "type": "string" }, "example": ["campus"] }
+        }
+      }
+    }
+  }
+}
