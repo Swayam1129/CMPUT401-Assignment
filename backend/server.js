@@ -144,6 +144,16 @@ app.patch("/api/v1/items/:id", (req,res) =>{
     const updated = db.prepare('SELECT * FROM items WHERE id = ?').get(req.params.id)
     sendOk(res,rowToItem(updated))
 })
+
+app.delete("/api/v1/items/:id", (req,res) => {
+    const result = db.prepare('DELETE FROM items WHERE id = ?').run(req.params.id)
+
+    if(result.changes === 0){
+        return sendError(res,404,"NOT_FOUND","Item not found")
+    }
+
+    res.status(204).end()
+})
 // catch-all : no route matched -> 404 in our format
 app.use((req,res)=>{
     sendError(res,404,"NOT_FOUND","Route not Found")
