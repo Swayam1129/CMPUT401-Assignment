@@ -1,6 +1,6 @@
 const express = require("express");
 const crypto = require("crypto");
-const swaggerUi = require("swagger-ui-express");
+const swaggerUiDist = require("swagger-ui-dist");
 const openapiSpec = require("./openapi.json");
 const { db, rowToItem } = require("./db");
 const path = require("path");
@@ -9,7 +9,24 @@ const path = require("path");
 const app = express();
 app.use(express.json());
 app.get("/openapi.json", (req, res) => res.json(openapiSpec));
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
+app.use("/docs-assets", express.static(swaggerUiDist.getAbsoluteFSPath()));
+app.get("/docs", (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Items API Docs</title>
+  <link rel="stylesheet" href="/docs-assets/swagger-ui.css">
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="/docs-assets/swagger-ui-bundle.js"></script>
+  <script>
+    SwaggerUIBundle({ url: "/openapi.json", dom_id: "#swagger-ui" });
+  </script>
+</body>
+</html>`);
+});
 app.use(express.static(path.join(__dirname, "..", "frontend")));
 
 function sendOk(res , data, status = 200){
